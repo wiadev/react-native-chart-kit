@@ -23,9 +23,21 @@ class AbstractChart extends Component {
     }
   };
 
-  calcHeight = (val, data, height) => {
+  calcHeight = (val, data, height, yAxisLabels) => {
     const max = Math.max(...data);
     const min = Math.min(...data);
+    if (yAxisLabels) {
+      let scale = 0;
+      const between = yAxisLabels.length - 1;
+
+      for (let i = 0; i < yAxisLabels.length; i++) {
+        if (yAxisLabels[i] <= val) {
+          scale = i;
+        }
+      }
+
+      return height * ((scale * 1.0 / between) + (yAxisLabels[scale + 1] ? (val - yAxisLabels[scale]) / ((yAxisLabels[scale + 1] - yAxisLabels[scale]) * between) : 0));
+    }
     if (min < 0 && max > 0) {
       return height * (val / this.calcScaler(data));
     } else if (min >= 0 && max >= 0) {
@@ -101,8 +113,29 @@ class AbstractChart extends Component {
       paddingRight,
       horizontalLabelRotation = 0
     } = config;
-    const { yAxisLabel = "", yAxisSuffix = "", yLabelsOffset = 12, chartConfig } = this.props;
+    const { yAxisLabel = "", yAxisSuffix = "", yLabelsOffset = 12, chartConfig, yAxisLabels } = this.props;
     const { decimalPlaces = 2 } = chartConfig;
+
+    if (!!yAxisLabels) {
+      return yAxisLabels.map((yLabel, i) => {
+        const x = paddingRight - yLabelsOffset;
+        const y = (height * 3) / 4 - ((height - paddingTop) / yAxisLabels.length) * i + 12;
+        return (
+          <Text
+            rotation={horizontalLabelRotation}
+            origin={`${x}, ${y}`}
+            key={Math.random()}
+            x={x}
+            textAnchor="end"
+            y={y}
+            {...this.getPropsForLabels()}
+          >
+            {yLabel}
+          </Text>
+        );
+      });
+    }
+
     return [...new Array(count)].map((_, i) => {
       let yLabel;
 

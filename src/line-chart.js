@@ -34,7 +34,8 @@ class LineChart extends AbstractChart {
       height,
       paddingTop,
       paddingRight,
-      onDataPointClick
+      onDataPointClick,
+      yAxisLabels,
     } = config;
     const output = [];
     const datas = this.getDatas(data);
@@ -45,11 +46,8 @@ class LineChart extends AbstractChart {
         if (hidePointsAtIndex.includes(i)) {
           return;
         }
-        const cx =
-          paddingRight + (i * (width - paddingRight)) / dataset.data.length;
-        const cy =
-          ((baseHeight - this.calcHeight(x, datas, height)) / 4) * 3 +
-          paddingTop;
+        const cx = paddingRight + (i * (width - paddingRight)) / dataset.data.length;
+        const cy = ((baseHeight - this.calcHeight(x, datas, height, yAxisLabels)) / 4) * 3 + paddingTop;
         const onPress = () => {
           if (!onDataPointClick || hidePointsAtIndex.includes(i)) {
             return;
@@ -98,7 +96,7 @@ class LineChart extends AbstractChart {
       return this.renderBezierShadow(config);
     }
 
-    const { data, width, height, paddingRight, paddingTop } = config;
+    const { data, width, height, paddingRight, paddingTop, yAxisLabels } = config;
     const datas = this.getDatas(data);
     const baseHeight = this.calcBaseHeight(datas, height);
     return config.data.map((dataset, index) => {
@@ -112,7 +110,7 @@ class LineChart extends AbstractChart {
                   paddingRight +
                   (i * (width - paddingRight)) / dataset.data.length;
                 const y =
-                  ((baseHeight - this.calcHeight(d, datas, height)) / 4) * 3 +
+                  ((baseHeight - this.calcHeight(d, datas, height, yAxisLabels)) / 4) * 3 +
                   paddingTop;
                 return `${x},${y}`;
               })
@@ -134,7 +132,7 @@ class LineChart extends AbstractChart {
       return this.renderBezierLine(config);
     }
 
-    const { width, height, paddingRight, paddingTop, data } = config;
+    const { width, height, paddingRight, paddingTop, data, yAxisLabels } = config;
     const output = [];
     const datas = this.getDatas(data);
     const baseHeight = this.calcBaseHeight(datas, height);
@@ -143,7 +141,7 @@ class LineChart extends AbstractChart {
         const x =
           (i * (width - paddingRight)) / dataset.data.length + paddingRight;
         const y =
-          ((baseHeight - this.calcHeight(d, datas, height)) / 4) * 3 +
+          ((baseHeight - this.calcHeight(d, datas, height, yAxisLabels)) / 4) * 3 +
           paddingTop;
         return `${x},${y}`;
       });
@@ -163,7 +161,7 @@ class LineChart extends AbstractChart {
   };
 
   getBezierLinePoints = (dataset, config) => {
-    const { width, height, paddingRight, paddingTop, data } = config;
+    const { width, height, paddingRight, paddingTop, data, yAxisLabels } = config;
     if (dataset.data.length === 0) {
       return "M0,0";
     }
@@ -175,7 +173,7 @@ class LineChart extends AbstractChart {
       );
     const baseHeight = this.calcBaseHeight(datas, height);
     const y = i => {
-      const yHeight = this.calcHeight(dataset.data[i], datas, height);
+      const yHeight = this.calcHeight(dataset.data[i], datas, height, yAxisLabels);
       return Math.floor(((baseHeight - yHeight) / 4) * 3 + paddingTop);
     };
 
@@ -245,7 +243,8 @@ class LineChart extends AbstractChart {
       decorator,
       onDataPointClick,
       verticalLabelRotation = 0,
-      horizontalLabelRotation = 0
+      horizontalLabelRotation = 0,
+      yAxisLabels
     } = this.props;
     const { labels = [] } = data;
     const { borderRadius = 0, paddingTop = 16, paddingRight = 64 } = style;
@@ -297,7 +296,8 @@ class LineChart extends AbstractChart {
                     count: Math.min(...datas) === Math.max(...datas) ? 1 : 4,
                     data: datas,
                     paddingTop,
-                    paddingRight
+                    paddingRight,
+                    yAxisLabels,
                   })
                 : null}
             </G>
@@ -332,7 +332,8 @@ class LineChart extends AbstractChart {
                 ...config,
                 paddingRight,
                 paddingTop,
-                data: data.datasets
+                data: data.datasets,
+                yAxisLabels,
               })}
             </G>
             <G>
@@ -341,7 +342,8 @@ class LineChart extends AbstractChart {
                   ...config,
                   data: data.datasets,
                   paddingRight,
-                  paddingTop
+                  paddingTop,
+                  yAxisLabels,
                 })}
             </G>
             <G>
@@ -351,7 +353,8 @@ class LineChart extends AbstractChart {
                   data: data.datasets,
                   paddingTop,
                   paddingRight,
-                  onDataPointClick
+                  onDataPointClick,
+                  yAxisLabels
                 })}
             </G>
             <G>
