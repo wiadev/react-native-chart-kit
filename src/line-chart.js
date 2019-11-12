@@ -277,6 +277,7 @@ class LineChart extends AbstractChart {
               {withInnerLines
                 ? this.renderHorizontalLines({
                     ...config,
+                    data: data.datasets[0].data,
                     count: 4,
                     paddingTop,
                     paddingRight
@@ -284,6 +285,7 @@ class LineChart extends AbstractChart {
                 : withOuterLines
                 ? this.renderHorizontalLine({
                     ...config,
+                    data: data.datasets[0].data,
                     paddingTop,
                     paddingRight
                   })

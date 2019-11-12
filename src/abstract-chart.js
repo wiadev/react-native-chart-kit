@@ -52,9 +52,9 @@ class AbstractChart extends Component {
   };
 
   getPropsForBackgroundLines() {
-    const { propsForBackgroundLines = {} } = this.props.chartConfig;
+    const { propsForBackgroundLines = {}, backgroundLineColor } = this.props.chartConfig;
     return {
-      stroke: this.props.chartConfig.color(0.2),
+      stroke: backgroundLineColor || this.props.chartConfig.color(0.2),
       strokeDasharray: "5, 10",
       strokeWidth: 1,
       ...propsForBackgroundLines
@@ -75,14 +75,14 @@ class AbstractChart extends Component {
   }
 
   renderHorizontalLines = config => {
-    const { count, width, height, paddingTop, paddingRight } = config;
+    const { count, width, height, paddingTop, paddingRight, data } = config;
     return [...new Array(count)].map((_, i) => {
       return (
         <Line
           key={Math.random()}
           x1={paddingRight}
           y1={(height / 4) * i + paddingTop}
-          x2={width}
+          x2={Math.floor(((width - paddingRight) / data.length) * (data.length - 1) + paddingRight)}
           y2={(height / 4) * i + paddingTop}
           {...this.getPropsForBackgroundLines()}
         />
@@ -91,13 +91,13 @@ class AbstractChart extends Component {
   };
 
   renderHorizontalLine = config => {
-    const { width, height, paddingTop, paddingRight } = config;
+    const { width, height, paddingTop, paddingRight, data } = config;
     return (
       <Line
         key={Math.random()}
         x1={paddingRight}
         y1={height - height / 4 + paddingTop}
-        x2={width}
+        x2={width - paddingRight}
         y2={height - height / 4 + paddingTop}
         {...this.getPropsForBackgroundLines()}
       />
@@ -225,11 +225,11 @@ class AbstractChart extends Component {
           x1={Math.floor(
             ((width - paddingRight) / data.length) * i + paddingRight
           )}
-          y1={0}
+          y1={paddingTop}
           x2={Math.floor(
             ((width - paddingRight) / data.length) * i + paddingRight
           )}
-          y2={height - height / 4 + paddingTop}
+          y2={(height / 4) * 3 + paddingTop}
           {...this.getPropsForBackgroundLines()}
         />
       );
@@ -242,9 +242,9 @@ class AbstractChart extends Component {
       <Line
         key={Math.random()}
         x1={Math.floor(paddingRight)}
-        y1={0}
+        y1={paddingTop}
         x2={Math.floor(paddingRight)}
-        y2={height - height / 4 + paddingTop}
+        y2={Math.floor((height / 4) * 3 + paddingTop)}
         {...this.getPropsForBackgroundLines()}
       />
     );
